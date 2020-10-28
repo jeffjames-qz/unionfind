@@ -83,7 +83,7 @@ func (uf *UnionFind) Root(p int) int {
 	}
 
 	for uf.Indices[p] != p {
-		uf.Indices[p] = uf.root[uf.Indices[p]]
+		uf.Indices[p] = uf.Indices[uf.Indices[p]]
 		p = uf.Indices[p]
 	}
 

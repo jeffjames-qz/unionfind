@@ -45,7 +45,7 @@ func New(size int) *UnionFind {
 	return new(UnionFind).init(size)
 }
 
-// Constructor initializes Indices and size arrays
+// Constructor initializes root and size arrays
 func (uf *UnionFind) init(size int) *UnionFind {
 	uf = new(UnionFind)
 	uf.Indices = make([]int, size)
@@ -59,43 +59,43 @@ func (uf *UnionFind) init(size int) *UnionFind {
 	return uf
 }
 
-// Union connects p and q by finding their Indicess and comparing their respective
+// Union connects p and q by finding their roots and comparing their respective
 // size arrays to keep the tree flat
 func (uf *UnionFind) Union(p int, q int) {
-	qIndices := uf.Indices(q)
-	pIndices := uf.Indices(p)
+	qRoot := uf.Root(q)
+	pRoot := uf.Root(p)
 
-	if uf.size[qIndices] < uf.size[pIndices] {
-		uf.Indices[qIndices] = uf.Indices[pIndices]
-		uf.size[pIndices] += uf.size[qIndices]
+	if uf.size[qRoot] < uf.size[pRoot] {
+		uf.Indices[qRoot] = uf.Indices[pRoot]
+		uf.size[pRoot] += uf.size[qRoot]
 	} else {
-		uf.Indices[pIndices] = uf.Indices[qIndices]
-		uf.size[qIndices] += uf.size[pIndices]
+		uf.Indices[pRoot] = uf.Indices[qRoot]
+		uf.size[qRoot] += uf.size[pRoot]
 	}
 }
 
-// Indices or Find traverses each parent element while compressing the
-// levels to find the Indices element of p
+// Root or Find traverses each parent element while compressing the
+// levels to find the root element of p
 // If we attempt to access an element outside the array it returns -1
-func (uf *UnionFind) Indices(p int) int {
+func (uf *UnionFind) Root(p int) int {
 	if p > len(uf.Indices)-1 {
 		return -1
 	}
 
 	for uf.Indices[p] != p {
-		uf.Indices[p] = uf.Indices[uf.Indices[p]]
+		uf.Indices[p] = uf.root[uf.Indices[p]]
 		p = uf.Indices[p]
 	}
 
 	return p
 }
 
-// Indices or Find
+// Root or Find
 func (uf *UnionFind) Find(p int) int {
-	return uf.Indices(p)
+	return uf.Root(p)
 }
 
 // Check if items p,q are connected
 func (uf *UnionFind) Connected(p int, q int) bool {
-	return uf.Indices(p) == uf.Indices(q)
+	return uf.Root(p) == uf.Root(q)
 }
